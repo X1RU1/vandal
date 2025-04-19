@@ -374,16 +374,16 @@ class CFGDotExporter(Exporter):
         calls = {block.ident(): "orange" for block in cfg.blocks
                  if any(op.opcode.is_call() for op in block.tac_ops)}
         color_dict = {**returns, **stops, **throws, **suicides, **creates, **calls}
-        nx.set_node_attributes(G, "color", color_dict)
+        nx.set_node_attributes(G, color_dict, "color")
         filldict = {b.ident(): "white" if len(b.entry_stack) <= 20 else "red"
                     for b in cfg.blocks}
-        nx.set_node_attributes(G, "fillcolor", filldict)
-        nx.set_node_attributes(G, "style", "filled")
+        nx.set_node_attributes(G, filldict, "fillcolor")
+        nx.set_node_attributes(G, "filled", "style")
 
         # Annotate each node with its basic block's internal data for later display
         # if rendered in html.
-        nx.set_node_attributes(G, "id", {block.ident(): block.ident()
-                                         for block in cfg.blocks})
+        nx.set_node_attributes(G, {block.ident(): block.ident()
+                                         for block in cfg.blocks}, "id")
 
         block_strings = {}
         for block in cfg.blocks:
@@ -395,7 +395,7 @@ class CFGDotExporter(Exporter):
                                    + ", ".join(str(d) for d in v.def_sites) \
                                    + "}\n"
             block_strings[block.ident()] = block_string + def_site_string
-        nx.set_node_attributes(G, "tooltip", block_strings)
+        nx.set_node_attributes(G, block_strings, "tooltip")
 
         # Write non-dot files using pydot and Graphviz
         if "." in out_filename and not out_filename.endswith(".dot"):
